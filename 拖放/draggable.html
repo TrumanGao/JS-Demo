@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>拖放</title>
+	</head>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		#page {
+			height: 100vh;
+			background-color: orange;
+			padding: 5vw 0;
+		}
+
+		#wrap {
+			display: flex;
+			justify-content: space-around;
+		}
+
+		/* 放节点 */
+		.droppable {
+			width: 15vw;
+			height: 15vw;
+			background-color: white;
+			position: relative;
+			border: 1px solid #ffffff;
+		}
+
+		/* 目标放节点 */
+		.dropping {
+			border: 1px dashed #999999;
+			background-color: #f3f3f3;
+		}
+
+		/* 拖节点 */
+		#draggable {
+			width: 14vw;
+			height: 14vw;
+			background-image: url(拖放.jpg);
+			background-size: cover;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin: auto;
+			cursor: pointer;
+		}
+
+		.invisible {
+			display: none;
+		}
+	</style>
+	<body>
+		<div id="page">
+			<div id="wrap">
+				<div class="droppable">
+					<div id="draggable" draggable="true"></div>
+				</div>
+				<div class="droppable"></div>
+				<div class="droppable"></div>
+				<div class="droppable"></div>
+				<div class="droppable"></div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			let domDrag = document.querySelector('#draggable') // 拖节点
+			let domDrop = document.querySelectorAll('.droppable') // 放节点
+			// 监听拖节点
+			domDrag.addEventListener('dragstart', dragstartFn) // 开始拖动
+			domDrag.addEventListener('dragend', dragendFn) // 结束拖动
+
+
+			// 监听放节点
+			domDrop.forEach(item => {
+				item.addEventListener('dragover', dragOver) // 拖动置于可释放节点上方（每100毫秒触发一次）
+				item.addEventListener('dragenter', dragenterFn) // 拖动移入可释放节点
+				item.addEventListener('dragleave', dragleaveFn) // 拖动移出可释放节点
+				item.addEventListener('drop', dropFn) // 在可释放节点上被释放
+			})
+
+			function dragstartFn(e) { // 开始拖动
+				setTimeout(() => {
+					domDrag.classList.add('invisible')
+				}, 0)
+			}
+
+			function dragendFn(e) { // 结束拖动
+				domDrag.classList.remove('invisible')
+
+				domDrop.forEach(item => {
+					item.classList.remove('dropping')
+				})
+			}
+
+			function dragOver(e) { // 拖动置于可释放节点上方（每100毫秒触发一次）
+				e.preventDefault();
+			}
+
+			function dragenterFn(e) { // 拖动移入可释放节点
+				e.preventDefault()
+				this.classList.add('dropping')
+			}
+
+			function dragleaveFn(e) { // 拖动移出可释放节点
+				this.classList.remove('dropping')
+			}
+
+			function dropFn(e) { // 在可释放节点上被释放
+				this.append(domDrag)
+			}
+		</script>
+	</body>
+</html>
